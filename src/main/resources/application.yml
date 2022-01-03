@@ -1,0 +1,99 @@
+logging:
+  level:
+    ROOT: INFO
+    '[org.hibernate.SQL]': DEBUG
+    '[om.boulow.mono]': DEBUG
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: static/**,.h2.server.properties
+  jackson:
+    serialization:
+      indent-output: true
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      # disable spring boot built-in h2-console since we start it manually with correct configuration
+      enabled: true
+      path: /console
+  datasource:
+    url: jdbc:h2:file:./BOULOW_DB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: admin
+    driver-class-name: org.h2.Driver
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        '[show_sql]': true
+        '[use_sql_comments]': true
+        '[format_sql]': true
+   
+boulow:
+  clientApp:
+    name: boulow-mono
+  # By default CORS is disabled. Uncomment to enable.
+  cors:
+    allowed-origins: "http://localhost:8100,http://localhost:9000,https://${DOMAIN},http://localhost:3000"
+    allowed-methods: "*"
+    allowed-headers: "*"
+    exposed-headers: "Authorization,Link,X-Total-Count,X-${boulow.clientApp.name}-alert,X-${boulow.clientApp.name}-error,X-${boulow.clientApp.name}-params,X-Xsrf-Token"
+    allow-credentials: true
+    max-age: 1800
+  mail:
+    from: admin@boulow.com
+  api-docs:
+    default-include-pattern: ${server.servlet.context-path:}/api/.*
+    management-include-pattern: ${server.servlet.context-path:}/management/.*
+    title: Boulow API
+    description: Boulow API documentation
+    version: 0.0.1
+    terms-of-service-url:
+    contact-name:
+    contact-url:
+    contact-email:
+    license: unlicensed
+    license-url:
+  security:
+    cookie-props:
+      max-age-in-minutes: 7200
+      http-only: true
+      secure: true
+      domain: ${DOMAIN}
+      path: /
+    allowed-public-apis: 
+      - /favicon.ico
+      - /configuration/**
+      - /public/**
+      - /management/**
+      - /console/**
+      - /swagger*/**
+      - /webjars/**
+      - /v2/api-docs
+  firebase-props:
+    database-url: ${FIREBASE_DATABASE}
+    enable-strict-server-session: false
+    enable-check-session-revoked: false
+    enable-logout-everywhere: false
+    session-expiry-in-days: 5
+  amazon-s3-props:
+    endpointUrl: https://s3.us-east-2.amazonaws.com
+    accessKey: {AWS_API_ACCESS_KEY}
+    secretKey: {AWS_API_SECRET_KEY}
+    region: us-east-1
+    bucketName: boulow
+  cloudFolders:
+    avatars: Avatars
+    contracts: Contracts
+    ads: Samples
+    hints: Hints
+    reviews: Reviews
+    ids: Ids
+    others: Others
